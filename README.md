@@ -17,14 +17,14 @@ You can use this app on the given urls:
 
 ### Endpoints
     /cars       POST    Add a car if it exists in the external api.
-                        {make:"make_name", model="model_name"} 
+                        {make:"make_name", model_name="model_name"} 
 
     /cars       GET     Lists cars with their average rate.
 
     /popular    GET     Lists cars by amount of their rates.
 
     /rate       POST    Add a rate to an existing model.
-                        {model:"model_name", rate=<from 1 to 5>}
+                        {model:"model_name", model_rate=<int from 1 to 5>}
 
 ### Prerequisites for setting it locally
 1. Docker
@@ -58,6 +58,8 @@ Described in the "requirements.txt"
 2. djangorestframework==3.12.2
 3. psycopg2==2.8.6
 4. requests==2.25.1
+5. gunicorn==20.0.4
+6. django-heroku==0.3.1
 
 PostgreSQL as a db.  
 JSON as a primary format.
