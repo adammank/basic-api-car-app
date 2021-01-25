@@ -7,7 +7,26 @@ to add a rate from 1 to 5 to it.
 Car will be saved only if it exists in the external API.  
 Listing saved cars by an amount of their rates also included. 
 
-### Prerequisites
+### Deploy
+You can use this app on the given urls:  
+> https://basic-api-car-app.herokuapp.com/cars  
+
+> https://basic-api-car-app.herokuapp.com/popular  
+
+> https://basic-api-car-app.herokuapp.com/rate
+
+### Endpoints
+    /cars       POST    Add a car if it exists in the external api.
+                        {make:"make_name", model="model_name"} 
+
+    /cars       GET     Lists cars with their average rate.
+
+    /popular    GET     Lists cars by amount of their rates.
+
+    /rate       POST    Add a rate to an existing model.
+                        {model:"model_name", rate=<from 1 to 5>}
+
+### Prerequisites for setting it locally
 1. Docker
 2. docker-compose
 3. Linux os system
@@ -20,7 +39,7 @@ To build & set up all the project:
 
 To make migrations & migrate:
 >docker-compose exec web python app/manage.py makemigrations  
-> 
+
 >docker-compose exec web python app/manage.py migrate
 
 To create a super user (admin):
@@ -28,13 +47,6 @@ To create a super user (admin):
 
 To shut down the app:
 >docker-compose down
-
-### Endpoints
-    /cars       POST
-    /cars       GET
-    /popular    GET
-    /rate       POST
-JSON format!
 
 ### Tests
 To run tests, simply use:
@@ -47,8 +59,5 @@ Described in the "requirements.txt"
 3. psycopg2==2.8.6
 4. requests==2.25.1
 
-PostgreSQL used as a db.
-
-### Deploy
-You can check also this app on the given url:  
-> https://basic-api-car-app.herokuapp.com/
+PostgreSQL as a db.  
+JSON as a primary format.
