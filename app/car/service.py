@@ -1,5 +1,4 @@
 import requests
-from . import constants
 
 
 class CarService:
@@ -10,7 +9,7 @@ class CarService:
         self.car_make_name = car_make_name
         self.car_model_name = car_model_name
 
-    def check_if_the_model_exists_in_the_external_api(self):
+    def model_exists(self):
         car_list = self._get_car_list()
 
         # Each car in the car list is a separate dictionary.
@@ -22,7 +21,8 @@ class CarService:
 
     def _get_car_list(self):
         car_list = requests.get(
-            url=constants.external_car_api_url(self.car_make_name)
+            url=f'https://vpic.nhtsa.dot.gov/api/vehicles/'
+                f'GetModelsForMake/{self.car_make_name}?format=json'
         ).json()
 
         # Returned dict has car list as a value for the key "Results".

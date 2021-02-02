@@ -5,7 +5,7 @@ from django.db.models import Count
 
 from .models import CarMake, CarModel, CarModelRate
 from .serializers import CarModelSerializer, CarModelRateSerializer
-from . import service
+from .service import CarService
 
 
 class CarListCreateAPIView(generics.ListCreateAPIView):
@@ -20,10 +20,10 @@ class CarListCreateAPIView(generics.ListCreateAPIView):
 
         make_name = request.data.get('make')
         model_name = request.data.get('model_name')
-        car_service = service.CarService(
+        car_service = CarService(
             car_make_name=make_name, car_model_name=model_name)
 
-        if car_service.check_if_the_model_exists_in_the_external_api():
+        if car_service.model_exists():
 
             car_make_instance, created = CarMake.objects.get_or_create(
                 make_name=make_name)
@@ -51,7 +51,7 @@ class CarPopularListAPIView(generics.ListAPIView):
     queryset = CarModel.objects.all()
 
     def get_queryset(self):
-        """Returns CarModel objects order by
+        """Returns CarModel objects ordered by
         number of associated CarModelRate instances."""
 
         qs = super().get_queryset()
