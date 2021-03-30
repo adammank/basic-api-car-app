@@ -10,10 +10,4 @@ router.register(r'rates', views.CarModelRateViewSet, basename='rates')
 
 urlpatterns = [
     path('', include(router.urls)),
-
-    path('popular',
-         views.CarPopularListAPIView.as_view()),
-
-    path('rate',
-         views.CarModelRateCreateAPIView.as_view()),
 ]
