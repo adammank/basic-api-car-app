@@ -1,0 +1,1 @@
+CAR_NOT_FOUND = r"Provided car make & car model was not found in the external source."
