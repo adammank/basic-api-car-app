@@ -21,7 +21,6 @@ class CarModelSerializer(serializers.ModelSerializer):
     average_rate = serializers.SerializerMethodField(
         method_name=r"get_average_rate"
     )
-    average_rate = serializers.SerializerMethodField()
 
     class Meta:
         model = CarModel
@@ -32,15 +31,11 @@ class CarModelSerializer(serializers.ModelSerializer):
         associated to a certain CarModel instance."""
 
         return car_model_instance.rates.aggregate(
-            Avg('model_rate')).get('model_rate__avg')
+            Avg('rate')).get('rate__avg')
 
 
 class CarModelRateSerializer(serializers.ModelSerializer):
-    model = serializers.SlugRelatedField(
-        slug_field='model_name',
-        queryset=CarModel.objects.all()
-    )
 
     class Meta:
         model = CarModelRate
-        fields = ['model', 'model_rate']
+        fields = ['model', 'rate']

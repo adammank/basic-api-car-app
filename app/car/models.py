@@ -32,9 +32,9 @@ class CarModelRate(models.Model):
         to=CarModel, related_name='rates',
         on_delete=models.CASCADE, null=False, blank=False)
 
-    model_rate = models.IntegerField(
+    rate = models.IntegerField(
         null=False, blank=False,
         validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     def __str__(self):
-        return f"Rate {self.model_rate} for model {self.model}"
+        return f"Rate {self.rate} for model {self.model}"
