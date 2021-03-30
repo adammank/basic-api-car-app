@@ -4,10 +4,16 @@ from rest_framework import serializers
 from .models import CarMake, CarModel, CarModelRate
 
 
-class CarMakeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CarMake
-        fields = ['make_name']
+class CarMakeSerializer(serializers.Serializer):
+
+    make = serializers.CharField(
+        max_length=20,  allow_null=False, allow_blank=False,
+    )
+
+    def create(self, validated_data):
+        car_make_instance, created = CarMake.objects.get_or_create(
+            make=validated_data.get('make'))
+        return car_make_instance
 
 
 class CarModelSerializer(serializers.ModelSerializer):
