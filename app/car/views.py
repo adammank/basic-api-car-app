@@ -37,10 +37,6 @@ class CarModelViewSet(viewsets.ModelViewSet):
                 data=CAR_NOT_FOUND,
                 status=status.HTTP_404_NOT_FOUND)
 
-class CarPopularListAPIView(generics.ListAPIView):
-    serializer_class = CarModelSerializer
-    queryset = CarModel.objects.all()
-
     def get_queryset(self):
         """Returns CarModel objects ordered by
         number of associated CarModelRate instances."""
