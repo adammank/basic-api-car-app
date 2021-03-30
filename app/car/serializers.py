@@ -17,15 +17,15 @@ class CarMakeSerializer(serializers.Serializer):
 
 
 class CarModelSerializer(serializers.ModelSerializer):
-    make = serializers.SlugRelatedField(
-        slug_field='make_name',
-        queryset=CarMake.objects.all()
+
+    average_rate = serializers.SerializerMethodField(
+        method_name=r"get_average_rate"
     )
     average_rate = serializers.SerializerMethodField()
 
     class Meta:
         model = CarModel
-        fields = ['make', 'model_name', 'average_rate']
+        fields = ['make', 'model', 'average_rate']
 
     def get_average_rate(self, car_model_instance):
         """Counts an average value of all rates
