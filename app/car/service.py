@@ -20,10 +20,10 @@ class CarService:
         return False
 
     def _get_car_list(self):
-        car_list = requests.get(
+        car_dict = requests.get(
             url=f'https://vpic.nhtsa.dot.gov/api/vehicles/'
                 f'GetModelsForMake/{self.car_make_name}?format=json'
         ).json()
 
         # Returned dict has car list as a value for the key "Results".
-        return car_list.get('Results')
+        return car_dict.get('Results')
