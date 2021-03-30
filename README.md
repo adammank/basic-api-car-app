@@ -1,65 +1,116 @@
-## Basic Api Car App
+# Basic Api Car App
 Adam Mańk
 
-### Preface
-App gives us the ability to save the model of a car &   
-to add a rate from 1 to 5 to it.  
-Car will be saved only if it exists in the external API.  
-Listing saved cars by an amount of their rates also included. 
+## Table of content:
 
-### Deploy
-You can use this app on the given urls:  
-> https://basic-api-car-app.herokuapp.com/cars  
+1. App description
+2. Endpoints & Allowed HTTP methods
+3. Deploy
+4. Setup via Docker
+5. Setup via venv
+6. Tests
+7. Used Packages
+___
 
-> https://basic-api-car-app.herokuapp.com/popular  
 
-> https://basic-api-car-app.herokuapp.com/rate
+### 1. App description
+    App connects with the external APIand verifies, If the given
+    car (make & model) exists in that source.
+    If it exists, it will be saved in our PostgreSQL db.
 
-### Endpoints
-    /cars       POST    Add a car if it exists in the external api.
-                        {make:"make_name", model_name="model_name"} 
+    We can also add a rates to created car models.
 
-    /cars       GET     Lists cars with their average rate.
+    Cars will be listed regarding to its amount of added rates.
 
-    /popular    GET     Lists cars by amount of their rates.
+    App uses JSON as a primary format.
 
-    /rate       POST    Add a rate to an existing model.
-                        {model:"model_name", model_rate=<int from 1 to 5>}
 
-### Prerequisites for setting it locally
-1. Docker
-2. docker-compose
-3. Linux os system
+### 2. Endpoints & Allowed HTTP methods
 
-### Setup
-Run those commands in the top directory (where docker files are).
+    /cars/                  POST    Create a car in the db If it exists in the external api.
+                                        {make:"make_name", model="model_name"} 
 
-To build & set up all the project:
->docker-compose up -d  
+                            GET     Lists cars by amount of their rates.
 
-To make migrations & migrate:
->docker-compose exec web python app/manage.py makemigrations  
+                            HEAD, OPTIONS
 
->docker-compose exec web python app/manage.py migrate
+    /cars/<car_model>/      GET, PUT, PATCH, DELETE, HEAD, OPTIONS
 
-To create a super user (admin):
->docker-compose exec web python app/manage.py createsuperuser
 
-To shut down the app:
->docker-compose down
+    /rates/                  POST    Add a rate to an existing model.
+                                        {model:"model_name", rate=<int from 1 to 5>}
 
-### Tests
-To run tests, simply use:
+                            GET, HEAD, OPTIONS
+
+    /rates/<rate_pk>        GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+
+
+### 3. Deploy
+You can test this API app on the given urls:
+> https://basic-api-car-app.herokuapp.com
+>
+> https://basic-api-car-app.herokuapp.com/cars
+> 
+> https://basic-api-car-app.herokuapp.com/rates
+
+
+### 4. Setup via Docker
+Prerequisites to set up project within the docker containers:
+> Docker  
+> docker-compose  
+> Linux OS
+
+Run those commands in the terminal in the top directory (where docker files are) for:
+
+1. Build & set up all the project. Also, for further starting app:
+   >docker-compose up -d
+
+2. Make migrations & migrate:
+    >docker-compose exec web python app/manage.py makemigrations  
+    >
+    >docker-compose exec web python app/manage.py migrate
+
+3. Create a super user (admin):
+    >docker-compose exec web python app/manage.py createsuperuser
+
+4. To shut down the app:
+    >docker-compose down
+
+
+### 5. Setup via venv
+
+Prerequisites to set up project with the virtual enviroment:
+> Python == 3.8  
+> Pipenv package for Python  
+> PostgreSQL
+
+Steps:
+1. Create and start your PostgreSQL db
+2. Change DATABASE section in config/settings.py module to match your criterias.
+3. Run in the terminal in app top root directory (where Pipfile is) commands: 
+   <p>&nbsp;</p>
+   
+    1*. Build & set up all the project:
+   
+   >    pipenv install
+    
+    2*. Make migrations & migrate:
+   >    pipenv run python app/manage.py makemigrations  
+   >    pipenv run python app/manage.py migrate
+      
+    3*. Start the server with:
+      
+    >   pipenv run python app/manage.py runserver
+
+
+### 6. Tests
+To run tests, simply use one of the underneath commands   
+in the terminal of the top app root directory, depends on your project set up type:
+
 > docker-compose exec web python app/manage.py test
 
-### Packages used
-Described in the "requirements.txt"
-1. Django==3.1.4
-2. djangorestframework==3.12.2
-3. psycopg2==2.8.6
-4. requests==2.25.1
-5. gunicorn==20.0.4
-6. django-heroku==0.3.1
+> pipenv run python app/manage.py test
 
-PostgreSQL as a db.  
-JSON as a primary format.
+
+### 7. Used Packages
+To see the full list of used packages in the project, go to the requirements.txt file.
