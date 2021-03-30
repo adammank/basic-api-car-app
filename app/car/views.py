@@ -59,6 +59,6 @@ class CarPopularListAPIView(generics.ListAPIView):
             '-number_of_rates')
 
 
-class CarModelRateCreateAPIView(generics.CreateAPIView):
+class CarModelRateViewSet(viewsets.ModelViewSet):
     queryset = CarModelRate.objects.all()
     serializer_class = CarModelRateSerializer
