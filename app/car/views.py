@@ -1,13 +1,12 @@
-from rest_framework import status, viewsets
-from rest_framework.response import Response
 from django.db import transaction
 from django.db.models import Count
+from rest_framework import status, viewsets
+from rest_framework.response import Response
 
-from .models import CarModel, CarModelRate
-from .serializers import CarModelSerializer, CarModelRateSerializer
-from .service import CarService
-from .utils import create_car_make_instance
-from .constants import CAR_NOT_FOUND
+from car.models import CarModel, CarModelRate
+from car.serializers import CarModelSerializer, CarModelAndMakeCreateSerializer, CarModelRateSerializer
+from car.service import CarService
+from car.constants import ResponseData
 
 
 class CarModelViewSet(viewsets.ModelViewSet):
@@ -16,30 +15,28 @@ class CarModelViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        """Based on the retrieved values, checks if the car exists in the external API.
-        It yes - creates two instances: CarMake & CarModel,
-                 responds with 201 Created status.
-        If no - responds with 404 Not Found status."""
+        """
+        Create method uses different serializer_class beacuse of its task:
+        it first has to create or get the instance of the parent model (CarMake),
+        to be able to create or get the demanded instance of the CarModel.
+        """
 
-        car_make_name = request.data.get('make')
-        car_model_name = request.data.get('model')
+        make = request.data.get('make')
+        model = request.data.get('model')
 
-        car_service = CarService(
-            car_make_name=car_make_name,
-            car_model_name=car_model_name
-        )
+        serializer = CarModelAndMakeCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            car_service = CarService(make=make, model=model)
+            if car_service.model_exists():
+                serializer.save()
+                return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            return Response(data=ResponseData.CAR_NOT_FOUND, status=status.HTTP_404_NOT_FOUND)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        if car_service.model_exists():
-            create_car_make_instance(car_make_name)
-            return super().create(request, *args, **kwargs)
-        else:
-            return Response(
-                data=CAR_NOT_FOUND,
-                status=status.HTTP_404_NOT_FOUND)
 
     def get_queryset(self):
-        """Returns CarModel objects ordered by
-        number of associated CarModelRate instances."""
+        """Returns CarModel objects ordered by the
+        number of the associated CarModelRate instances."""
 
         qs = super().get_queryset()
         return qs.annotate(number_of_rates=Count('rates')).order_by(

@@ -1,19 +1,8 @@
 from django.db.models import Avg
 from rest_framework import serializers
 
-from .models import CarMake, CarModel, CarModelRate
-
-
-class CarMakeSerializer(serializers.Serializer):
-
-    make = serializers.CharField(
-        max_length=20,  allow_null=False, allow_blank=False,
-    )
-
-    def create(self, validated_data):
-        car_make_instance, created = CarMake.objects.get_or_create(
-            make=validated_data.get('make'))
-        return car_make_instance
+from car.models import CarMake, CarModel, CarModelRate
+from car.validators import string_validator
 
 
 class CarModelSerializer(serializers.ModelSerializer):
@@ -32,6 +21,25 @@ class CarModelSerializer(serializers.ModelSerializer):
 
         return car_model_instance.rates.aggregate(
             Avg('rate')).get('rate__avg')
+
+
+class CarModelAndMakeCreateSerializer(serializers.Serializer):
+
+    make = serializers.CharField(
+        max_length=20, allow_null=False,
+        allow_blank=False, validators=[string_validator]
+    )
+    model = serializers.CharField(
+        max_length=20, allow_null=False,
+        allow_blank=False, validators=[string_validator]
+    )
+
+    def create(self, validated_data):
+        car_make_instance, created = CarMake.objects.get_or_create(
+            make=validated_data.get('make'))
+        car_model_instance, created = CarModel.objects.get_or_create(
+            make=car_make_instance, model=validated_data.get('model'))
+        return car_model_instance
 
 
 class CarModelRateSerializer(serializers.ModelSerializer):
