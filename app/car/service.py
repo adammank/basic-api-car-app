@@ -12,10 +12,9 @@ class CarService:
     def model_exists(self) -> bool:
         car_list = self._get_car_list()
 
-        # Each car in the car list is a separate dictionary.
+        # Each car_model in the car_list is a separate dictionary.
         for car_model in car_list:
-            car_model_name = car_model.get('Model_Name')
-            if self.model == car_model_name:
+            if self.model == car_model.get('Model_Name'):
                 return True
         return False
 
@@ -28,5 +27,5 @@ class CarService:
         except Exception:
             car_dict = dict()
 
-        # Returned dict has a list of the cars under the key "Results"
+        # Returned dict has a list of the cars (another dicts) under the key "Results".
         return car_dict.get('Results', list())
