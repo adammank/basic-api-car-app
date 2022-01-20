@@ -5,15 +5,15 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.test import APITestCase
 from django.db.models import Count
 
-from .models import CarMake, CarModel, CarModelRate
-from .serializers import CarModelSerializer
-from .service import CarService
+from car.models import CarMake, CarModel, CarModelRate
+from car.serializers import CarModelSerializer, CarModelRateSerializer
+from car.service import CarService
 
 
 ### Only a few cases vere coverage by tests.
 
 
-class TestUtils:
+class BaseTestClass(APITestCase):
 
     car_model_data = {
         'make': 'honda',
@@ -46,7 +46,7 @@ class TestUtils:
         CarModelRate.objects.create(model=car_model_instance_02, rate=2)
 
 
-class POSTCarTestCase(APITestCase, TestUtils):
+class POSTCarTestCase(BaseTestClass):
 
     @mock.patch('car.service.CarService.model_exists')
     def test_cars_post__model_not_exists(self, model_exists_mock):
@@ -105,7 +105,7 @@ class POSTCarTestCase(APITestCase, TestUtils):
         self.assertEqual(0, CarModelRate.objects.all().count())
 
 
-class GETCarTestCase(APITestCase, TestUtils):
+class GETCarTestCase(BaseTestClass):
 
     def test_cars_get(self):
         """
@@ -140,7 +140,7 @@ class GETCarTestCase(APITestCase, TestUtils):
         json_response_data = JSONRenderer().render(json_response)
 
         car_rates = CarModelRate.objects.all()
-        serializer = CarModelSerializer(car_rates, many=True)
+        serializer = CarModelRateSerializer(car_rates, many=True)
         json_serializer_data = JSONRenderer().render(serializer.data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
